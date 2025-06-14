@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+
+    <link rel="shortcut icon" href="{% static "images/DQLOGO.png" %}">
+    {#    主要原因#}
+    <link href="{% static "css/nifty.min.css" %}" rel="stylesheet">
+
+
+    <link href="{% static "css/nifty-demo-icons.min.css" %}" rel="stylesheet">
+    <link href="{% static  "css/nifty-demo.min.css" %}" rel="stylesheet">
+    <link href="{% static  "css/font-awesome.min.css" %}" rel="stylesheet">
+    <link href="{% static  "css/wiki.css" %}" rel="stylesheet">
+    <link href="{% static  "css/pace.min.css" %}" rel="stylesheet">
+    <script src="{% static  "js/pace.min.js" %}"></script>
+    <script src="{% static  "js/jquery-2.2.4.min.js" %}"></script>
+    <!--BootstrapJS [ RECOMMENDED ]-->
+    <script src="{% static  "js/bootstrap.min.js" %}"></script>
+    <!--NiftyJS [ RECOMMENDED ]-->
+    <script src="{% static  "js/nifty.min.js" %}"></script>
+    <script src="{% static  "js/icons.js" %}"></script>
+
+    <script src={% static "js/nifty-demo.min.js" %}></script>
+
+    <style>
+        /* 整体布局 */
+        #page-content {
+            display: flex;
+            padding: 20px;
+        }
+
+        /* 导航栏样式 */
+        #navigation {
+            width: 30%;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            height: 600px;
+            {#margin-left: 200px;#}
+        }
+
+        /* 知识库构建区域样式 */
+        #knowledgebase-build {
+            width: 70%;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            margin-left: 10px;
+        }
+
+        /* 表单和按钮样式 */
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 500;
+        }
+
+        input,
+        select,
+        button {
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: skyblue solid 1px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #76EEC6;
+        }
+        /* 加载指示器样式 */
+        .loading-indicator {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-spinner {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="container" class="effect aside-float aside-bright mainnav-lg">
+    <header id="navbar">
+        <div id="navbar-container" class="boxed">
+            <div class="navbar-header">
+                <a href="{% url 'chat' %}" class="navbar-brand">
+                    {#                                            <img src="../static/images/DQLOGO.png.jpg" alt="Nifty Logo" class="brand-icon">#}
+                    <div class="brand-title" style="display: flex; align-items: center;">
+                        <img src="{% static 'images/yy.jpg' %}" height="25px" width="25px"
+                             style="border-radius: 40%; margin-right: 5px;">
+                        <span class="brand-text" style="color: honeydew">问答助手</span>
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="navbar-content clearfix">
+                <ul class="nav navbar-top-links pull-left">
+
+                    <li class="tgl-menu-btn">
+                        <a class="mainnav-toggle" href="#">
+                            <i class="demo-pli-view-list"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                <ul class="nav navbar-top-links pull-left">
+                    <h4 style="font-size: 20px">基于大语言模型的糖尿病问答系统</h4>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <div class="boxed">
+        <div id="content-container" style="">
+            <div id="page-content">
+                 <div id="navigation">
+            <h3 class="mb-4">参数设置</h3>
+            <form >
+                <div class="mb-3">
+                    <label for="max_length" class="form-label">max_length:</label>
+                    <input type="number" class="form-control" id="max_length" name="max_length">
+                </div>
+                <div class="mb-3">
+                    <label for="top_p" class="form-label">top_p:</label>
+                    <input type="number" step="0.01" class="form-control" id="top_p" name="top_p">
+                </div>
+                <div class="mb-3">
+                    <label for="temperature" class="form-label">temperature:</label>
+                    <input type="number" step="0.01" class="form-control" id="temperature" name="temperature">
+                </div>
+                 <div class="d-grid gap-2">
+                <button type="button" id="save-params" class="btn">保存参数</button>
+            </div>
+             <!-- 加载指示器 -->
+    <div class="loading-indicator" id="loading-indicator">
+        <div class="loading-spinner"></div>
+    </div>
+            </form>
+
+            <h3 class="mb-4">向量数据库索引</h3>
+            <form method="post">
+                <div class="mb-3">
+                    <label for="knowledgebase-dropdown" class="form-label">选择知识库:</label>
+                    <select id="knowledgebase-dropdown" name="knowledgebase-dropdown" class="form-select">
+                        <!-- 这里的选项需要根据实际的知识库动态生成 -->
+                        <option value="糖尿病资料库1" selected>糖尿病资料库1</option>
+{#                        <option value="糖尿病资料库2">糖尿病资料库2</option>#}
+                        <option value="无">无</option>
+                    </select>
+                </div>
+                <div class="d-grid gap-2">
+                    <button id="load-kb" class="btn">装载知识库</button>
+{#                    <button id="unload-kb" class="btn">卸载知识库</button>#}
+                </div>
+            </form>
+                     
+        </div>
+
+
+        <div id="knowledgebase-build">
+            <h3 class="mb-4">知识库构建</h3>
+            <form id="kb-form">
+                <div class="mb-3">
+                    <label for="kb-name" class="form-label">知识库名称:</label>
+                    <input type="text" class="form-control" id="kb-name" name="kb-name">
+                </div>
+                <div class="mb-3">
+                    <label for="kb-documents" class="form-label">上传文档:</label>
+                    <input type="file" class="form-control" id="kb-documents" name="documents" multiple>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn">创建知识库</button>
+                </div>
+            </form>
+        </div>
+            </div>
+
+
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+    // 加载知识库下拉菜单
+    loadKnowledgeBases();
+    // 显示加载指示器
+           
+    // 表单提交处理
+    document.getElementById('kb-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const kbName = document.getElementById('kb-name').value;
+        const files = document.getElementById('kb-documents').files;
+
+        // 创建FormData对象用于文件上传
+        const formData = new FormData();
+        formData.append('kb_name', kbName);
+
+        // 添加所有文件
+        for (let i = 0; i < files.length; i++) {
+            formData.append('documents', files[i]);
+        }
+         const loadingIndicator = document.getElementById('loading-indicator');
+            loadingIndicator.style.display = 'flex';
+        // 发送请求到后端
+        fetch('/qa/knowledgebase_create/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),  // 确保有CSRF token
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert('知识库创建成功!');
+                document.getElementById('kb-name').value = '';
+                document.getElementById('kb-documents').value = '';
+                loadingIndicator.style.display = 'none';
+                loadKnowledgeBases();  // 刷新下拉菜单
+            } else {
+                alert('创建失败: ' + data.message);
+                loadingIndicator.style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('创建知识库时出错');
+        });
+    });
+});
+
+// 加载知识库列表
+function loadKnowledgeBases() {
+    fetch('/qa/knowledgebase_list/')
+        .then(response => response.json())
+        .then(data => {
+            const dropdown = document.getElementById('knowledgebase-dropdown');
+
+            // 清空现有选项，保留"无"选项
+            {#dropdown.innerHTML = '<option value="" selected>无</option>';#}
+
+            // 添加从数据库获取的知识库
+            data.knowledgebases.forEach(kb => {
+                const option = document.createElement('option');
+                option.value = kb.name;
+                console.log(kb.name)
+                option.textContent = kb.name;
+                dropdown.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading knowledge bases:', error);
+        });
+}
+
+// 获取CSRF token的函数
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+        </script>
+        <script>
+// 保存参数 - 只更新三个参数
+document.getElementById('save-params').addEventListener('click', function() {
+    const formData = {
+        max_length: document.getElementById('max_length').value,
+        top_p: document.getElementById('top_p').value,
+        temperature: document.getElementById('temperature').value
+    };
+     // 显示加载指示器
+            const loadingIndicator = document.getElementById('loading-indicator');
+            loadingIndicator.style.display = 'flex';
+    fetch('/qa/update_params/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message || '参数更新成功');
+        loadingIndicator.style.display = 'none';
+    })
+    .catch(error => {
+        alert('参数更新失败: ' + error);
+        loadingIndicator.style.display = 'none';
+    });
+});
+
+// 装载知识库 - 只更新kb_base
+document.getElementById('load-kb').addEventListener('click', function() {
+     event.preventDefault()
+    const kbName = document.getElementById('knowledgebase-dropdown').value;
+    if (!kbName) {
+        alert('请选择知识库');
+        return;
+    }
+     // 显示加载指示器
+            const loadingIndicator = document.getElementById('loading-indicator');
+            loadingIndicator.style.display = 'flex';
+
+    fetch('/qa/load_knowledgebase/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            {#'X-CSRFToken': getCookie('csrftoken'),#}
+        },
+        body: JSON.stringify({ kb_base: kbName })
+    })
+    .then(response => response.json())
+        
+    .then(data => {
+        console.log('data',data)
+        alert(data.message);
+        // 隐藏加载指示器
+                loadingIndicator.style.display = 'none';
+    })
+    .catch(error => {
+        alert('知识库装载失败: ' + error);
+        // 隐藏加载指示器
+                {#loadingIndicator.style.display = 'none';#}
+    });
+});
+
+// 卸载知识库 - 将kb_base设为空字符串
+{#document.getElementById('unload-kb').addEventListener('click', function() {#}
+{#    fetch('/qa/unload_knowledgebase/', {#}
+{#        method: 'POST',#}
+{#        headers: {#}
+{#            'Content-Type': 'application/json',#}
+{#            'X-CSRFToken': getCookie('csrftoken'),#}
+{#        },#}
+{#        body: JSON.stringify({ kb_base: "" })#}
+{#    })#}
+{#    .then(response => response.json())#}
+{#    .then(data => {#}
+{#        alert(data.message || '知识库卸载成功');#}
+{#        document.getElementById('knowledgebase-dropdown').value = "";#}
+{#    })#}
+{#    .catch(error => {#}
+{#        alert('知识库卸载失败: ' + error);#}
+{#    });#}
+{# });#}
+
+// 获取CSRF token的函数
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+        <nav id="mainnav-container">
+            <div id="mainnav">
+                <div id="mainnav-menu-wrap">
+                    <div class="nano">
+                        <div class="nano-content">
+                            <ul id="mainnav-menu" class="list-group">
+                                <li class="list-header" style="font-size: 18px"> 设置</li>
+                                <li>
+                                    <a href="{% url 'person_setting' %}" id="persona-style-btn">
+                                        <i class="fa fa-gear" style="width:24px"></i>
+                                        <strong class="menu-title" style="font-size: 14px">知识库设置</strong>
+                                    </a>
+                                </li>
+                                <li class="list-divider"></li>
+
+
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </nav>
+    </div>
+    <footer id="footer">
+    </footer>
+    <button class="scroll-top btn">
+        <i class="pci-chevron chevron-up"></i>
+    </button>
+</div>
+
+</body>
+</html>

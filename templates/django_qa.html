@@ -1,0 +1,251 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+
+    <link rel="shortcut icon" href="{% static "images/logo.jpg" %}">
+    <link href="{% static "css/nifty.min.css" %}" rel="stylesheet">
+
+
+    <link href="{% static "css/nifty-demo-icons.min.css" %}" rel="stylesheet">
+
+
+    <link href="{% static  "css/nifty-demo-icons.min.css" %}" rel="stylesheet">
+    <link href="{% static  "css/nifty-demo.min.css" %}" rel="stylesheet">
+    <link href="{% static  "css/font-awesome.min.css" %}" rel="stylesheet">
+    <link href="{% static  "css/wiki.css" %}" rel="stylesheet">
+    <link href="{% static  "css/pace.min.css" %}" rel="stylesheet">
+    <script src="{% static  "js/pace.min.js" %}"></script>
+    <script src="{% static  "js/jquery-2.2.4.min.js" %}"></script>
+    <!--BootstrapJS [ RECOMMENDED ]-->
+    <script src="{% static  "js/bootstrap.min.js" %}"></script>
+    <!--NiftyJS [ RECOMMENDED ]-->
+    <script src="{% static  "js/nifty.min.js" %}"></script>
+    <script src="{% static  "js/icons.js" %}"></script>
+    <script src="{% static  "js/echarts.min.js" %}"></script>
+
+    <script src={% static "js/nifty-demo.min.js" %}></script>
+    <link href="{% static 'css/qastyle.css' %}">
+    <style>
+        .chat-container {
+            margin-left: 150px;
+            {#margin-top: 50px;#}
+            width: 1000px;
+            max-width: 1000px;
+            height: 120vh;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .bot-message {
+            background-color: #e5f5e0;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            margin-right: auto;
+            font-size: 18px;
+        }
+
+        .user-message {
+            background-color: #4CAF50;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+            margin-left: auto;
+            font-size: 18px;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background-color: white;
+            border-top: 1px solid #eee;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        #send-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 0 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        #send-button:hover {
+            background-color: #45a049;
+        }
+
+        .typing-indicator {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #e5f5e0;
+            border-radius: 18px;
+            margin-bottom: 15px;
+            font-style: italic;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="container" class="effect aside-float aside-bright mainnav-lg">
+    <header id="navbar">
+        <div id="navbar-container" class="boxed">
+            <div class="navbar-header">
+                <a href="" class="navbar-brand">
+                    {#                        <img src="../static/images/logo.jpg" alt="Nifty Logo" class="brand-icon">#}
+                    <div class="brand-title">
+                        <span class="brand-text">仪表盘</span>
+                    </div>
+                </a>
+            </div>
+
+
+            <div class="navbar-content clearfix">
+                <ul class="nav navbar-top-links pull-left">
+
+                    <li class="tgl-menu-btn">
+                        <a class="mainnav-toggle" href="#">
+                            <i class="demo-pli-view-list"></i>
+                        </a>
+                    </li>
+
+                </ul>
+                <ul class="nav navbar-top-links pull-left">
+                    <h4 style="font-size: 20px">基于大模型的景点数据知识图谱可视化与问答系统</h4>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <div class="boxed">
+        <div id="content-container" style="">
+            <div id="page-content">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        景点问答助手
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message bot-message">
+                            Hi~ 我是你的景点小助手，很高兴见到你~ 我可以帮你查询景点信息，推荐游玩景点，请问有什么可以帮你的吗？
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="user-input" placeholder="输入你的问题..." autocomplete="off">
+                        <button id="send-button">发送</button>
+                    </div>
+                </div>
+                <script src="{% static "js/qascript.js" %}"></script>
+            </div>
+            <nav id="mainnav-container">
+                <div id="mainnav">
+                    <div id="mainnav-menu-wrap">
+                        <div class="nano">
+                            <div class="nano-content">
+                                <ul id="mainnav-menu" class="list-group">
+                                    <li class="list-header" style="font-size: 18px"> 景点数据可视化</li>
+                                    <li>
+                                        <a href="{% url 'get_all_relation' %}">
+                                            <i class="fa fa-search" style="width:24px"></i>
+                                            <span class="menu-title">
+                                                <strong style="font-size: 20px">景点知识图谱</strong>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'get_scenic_spot_details' %}">
+                                            <i class="fa fa-pie-chart" style="width:24px"></i>
+                                            <span class="menu-title">
+                                                <strong style="font-size: 20px">景点查询</strong>
+                                            </span>
+
+                                        </a>
+                                    </li>
+
+                                    <li class="list-divider"></li>
+
+
+                                    <li class="list-header" style="font-size: 18px">智能问答系统</li>
+                                    <li>
+                                        <a href="{% url 'chat' %}">
+                                            <i class="fa fa-question-circle" style="width:24px"></i>
+                                            <strong class="menu-title" style="font-size: 20px">景点智能问答</strong>
+                                        </a>
+                                    </li>
+                                    <li class="list-header" style="font-size: 18px">用户设置</li>
+                                        <li>
+                                            <a href="{% url 'user_setting' %}">
+                                                <i class="fa fa-gear" style="width:24px"></i>
+                                                <strong class="menu-title" style="font-size: 20px">修改信息</strong>
+                                            </a>
+                                    </li>
+
+                                </ul>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </nav>
+
+
+        </div>
+        <footer id="footer">
+        </footer>
+        <button class="scroll-top btn">
+            <i class="pci-chevron chevron-up"></i>
+        </button>
+    </div>
+</div>
+</body>
+</html>
