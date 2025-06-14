@@ -34,8 +34,7 @@
 * PyTorch 2.0+
 ## 安装步骤
 ```text
-git clone https://github.com/你的用户名/糖尿病问答系统.git
-cd 糖尿病问答系统
+git clone https://github.com/Lixlin136/Diabetes-QA.git
 
 # 创建虚拟环境
 python -m venv venv
