@@ -1,0 +1,15 @@
+Django>=4.2,<5.0
+django-cors-headers>=4.3.0
+torch>=2.0.0
+transformers>=4.30.0
+sentence-transformers>=2.2.2
+accelerate>=0.21.0
+PyPDF2>=3.0.0
+pdfminer.six>=20221105
+langchain>=0.1.0
+langchain-community>=0.0.1
+faiss-cpu>=1.7.4  
+numpy>=1.24.0
+tqdm>=4.65.0
+huggingface-hub>=0.16.0
+
