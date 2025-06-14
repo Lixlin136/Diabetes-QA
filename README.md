@@ -51,6 +51,10 @@ pip install -r requirements.txt
 ## 使用指南
 ```text
 python manage.py runserver
+
+python manage.py makemigrations
+
+python manage.py migrate
 ```
 访问 http://localhost:8000/chat 进入问答界面
 
